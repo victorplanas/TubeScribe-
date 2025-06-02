@@ -1,5 +1,5 @@
 pytube>=15.0.0
 pandas==2.2.1
-yt-dlp==2024.3.10
+yt-dlp==2023.12.30
 flask==3.0.2
-python-dotenv==1.0.1
+python-dotenv==1.0.1 

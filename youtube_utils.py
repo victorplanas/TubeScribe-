@@ -119,39 +119,40 @@ def parse_ts(ts):
         return 0
 
 def get_video_info(url):
-    """Get video information using yt-dlp."""
-    ydl_opts = {
-        'quiet': True,
-        'skip_download': True,
-    }
-    
     try:
-        print(f"Attempting to get video info from: {url}")
+        # Configure yt-dlp with additional options
+        ydl_opts = {
+            'quiet': True,
+            'no_warnings': True,
+            'extract_flat': True,
+            'cookiesfrombrowser': ('chrome',),  # Use cookies from Chrome
+            'cookiefile': 'cookies.txt',  # Use cookies file if available
+            'nocheckcertificate': True,
+            'ignoreerrors': True,
+            'no_color': True,
+            'extract_flat': 'in_playlist',
+            'skip_download': True,
+            'writesubtitles': True,
+            'writeautomaticsub': True,
+            'subtitleslangs': ['en'],
+            'format': 'best',
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            print("Loading video metadata...")
             info = ydl.extract_info(url, download=False)
-            
-            # Extract video information
-            video_info = {
-                'title': info.get('title', 'N/A'),
-                'channel': info.get('channel', 'N/A'),
-                'upload_date': info.get('upload_date', 'N/A'),
-                'thumbnail_url': info.get('thumbnail', 'N/A')
+            return {
+                'title': info.get('title', ''),
+                'channel': info.get('uploader', ''),
+                'upload_date': info.get('upload_date', ''),
+                'thumbnail': info.get('thumbnail', ''),
+                'duration': info.get('duration', 0),
+                'view_count': info.get('view_count', 0),
+                'like_count': info.get('like_count', 0),
+                'description': info.get('description', '')
             }
-            
-            print(f"Successfully loaded video info:")
-            print(f"Title: {video_info['title']}")
-            print(f"Channel: {video_info['channel']}")
-            print(f"Upload Date: {video_info['upload_date']}")
-            print(f"Thumbnail URL: {video_info['thumbnail_url']}")
-            
-            return video_info
-            
     except Exception as e:
         print(f"Error getting video info: {str(e)}")
-        print(f"Error type: {type(e).__name__}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
         return None
 
 def extract_transcript(url):
@@ -299,8 +300,8 @@ def analyze_video(url):
         'duration_formatted',
         'duration',
         'view_count',
-        'likes',
-        'comment_count',
+        'like_count',
+        'description',
         'upload_date',
         'url',
         'transcript',
